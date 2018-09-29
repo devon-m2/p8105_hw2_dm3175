@@ -14,7 +14,6 @@ library(p8105.datasets)
 Problem 1 will use NYC Transit Data which includes information on entrance and exits for all subway stations located in New York City. 
 
 ## Import and Clean Dataset
-
 The dataset was first imported and cleaned: 
 
 ```{r import nyc transit data}
@@ -31,9 +30,31 @@ NYC_traffic_data = read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_
 ```
 
 ## Description of Dataset
+The NYC traffic dataset describes information concerning the entrance and exits for all subway stations in New York City, including what subway lines are served by that station, the precise location of entrances, and other information such as staffing, vending and whether the station is compliant under the American Disabilities Act (ADA). 
 
-The NYC traffic dataset was uploaded 
-The following variables were retained: line, station name, station latitude/longitude, routes served, entry, vending, entrance type, and ADA compliance.
+The dataset was imported and the following data cleaning steps were taken: 
+
+*  Specified column variable types when importing. 
+
+*  Cleaned column names using `janitor::clean_names`
+
+*  Retained the following variables: line, station name, station latitude/longitude, routes served, entry, vending, entrance type, and ADA compliance.
+
+*  Recoded the `entry` variable from a character to a logical variable type using the `recode` function and `as.logical` function. 
+
+*  Converted data in the `line` and `station_name` columns to lower case. 
+
+**Dimensions**: The dataset contains `r nrow(NYC_traffic_data)` rows and `r ncol(NYC_traffic_data)` columns. 
+
+**Is this data tidy?** The dataset is not yet fully tidy, as each separate route and corresponding subway line are separated out into separate columns. Instead, the routes and corresponding subway lines should be collapsed into two columns: route name and route number. This step will be completed in the section below. 
+
+### Questions:
+
+1. **How many distinct stations are there?**
+
+1. **How many stations are ADA compliant?**
+
+1. **What propotion of station entrances / exits without vending allow entrance?**
 
 ## Reformat Route Number and Route Name Variables 
 
