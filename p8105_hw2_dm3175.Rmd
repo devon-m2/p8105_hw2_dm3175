@@ -23,8 +23,8 @@ NYC_traffic_data = read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_
   janitor::clean_names() %>% 
   select(line, station_name, station_latitude, station_longitude, 
        route1:route11, entry, vending, entrance_type, ada) %>% 
-  mutate(entry = recode(entry, 'YES' = "TRUE", 'NO' = "FALSE"), 
-         entry = as.logical(entry),
+  mutate(entry = recode(entry, 'YES' = "TRUE", 'NO' = "FALSE")) %>% 
+  mutate(entry = as.logical(entry),
           entrance_type = tolower(entrance_type),
           line = tolower(line),
           station_name = tolower(station_name))
@@ -67,13 +67,13 @@ There are `r tally(distinct_NYC_traffic_data, ada == TRUE, sort = FALSE)` unique
 
 3) **What proportion of station entrances / exits without vending allow entrance?**
 
+Use filter to make a filtered dataset based on distinct stations without vending: 
 ```{r}
 filter_distinct_NYC_traffic_data = filter(distinct_NYC_traffic_data, vending == "NO")
 
-mean(filter_distinct_NYC_traffic_data$entry)
 ```
 
-
+The proportion of station entrance/exits without vending allowing entrance is `r mean(filter_distinct_NYC_traffic_data$entry)`. 
 
 ## Reformat Route Number and Route Name Variables 
 
