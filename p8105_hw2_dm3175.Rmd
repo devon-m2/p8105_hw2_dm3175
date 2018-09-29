@@ -8,6 +8,7 @@ output: github_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(p8105.datasets)
+library("dplyr")
 ```
 
 # Problem 1: NYC Transit Data
@@ -50,11 +51,22 @@ The dataset was imported and the following data cleaning steps were taken:
 
 ### Questions:
 
-1. **How many distinct stations are there?**
+1) **How many distinct stations are there?**
 
-1. **How many stations are ADA compliant?**
+To extract the number of distinct stations, created a subset of data removing duplicates based on both `station_name` and `line`. This dataset still maintains information for all other variables kept above. 
+```{r extract distinct stations}
+distinct_NYC_traffic_data = distinct(NYC_traffic_data, line, station_name, .keep_all = TRUE)
+  
+```
 
-1. **What propotion of station entrances / exits without vending allow entrance?**
+There are `r nrow(distinct_NYC_traffic_data)` distinct stations. 
+
+2) **How many stations are ADA compliant?**
+
+There are `r tally(distinct_NYC_traffic_data, ada == TRUE, sort = FALSE)` unique ADA compliant stations. 
+
+3) **What propotion of station entrances / exits without vending allow entrance?**
+
 
 ## Reformat Route Number and Route Name Variables 
 
