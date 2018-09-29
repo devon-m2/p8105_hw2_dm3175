@@ -23,11 +23,11 @@ NYC_traffic_data = read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_
   janitor::clean_names() %>% 
   select(line, station_name, station_latitude, station_longitude, 
        route1:route11, entry, vending, entrance_type, ada) %>% 
-  mutate(entry = recode(entry, 'YES' = "TRUE", 'NO' = "FALSE"),
-       entry = as.logical(entry),
-       entrance_type = tolower(entrance_type),
-       line = tolower(line),
-       station_name = tolower(station_name))
+  mutate(entry = recode(entry, 'YES' = "TRUE", 'NO' = "FALSE"), 
+         entry = as.logical(entry),
+          entrance_type = tolower(entrance_type),
+          line = tolower(line),
+          station_name = tolower(station_name))
 ```
 
 ## Description of Dataset
@@ -65,11 +65,19 @@ There are `r nrow(distinct_NYC_traffic_data)` distinct stations.
 
 There are `r tally(distinct_NYC_traffic_data, ada == TRUE, sort = FALSE)` unique ADA compliant stations. 
 
-3) **What propotion of station entrances / exits without vending allow entrance?**
+3) **What proportion of station entrances / exits without vending allow entrance?**
+
+```{r}
+filter_distinct_NYC_traffic_data = filter(distinct_NYC_traffic_data, vending == "NO")
+
+mean(filter_distinct_NYC_traffic_data$entry)
+```
+
 
 
 ## Reformat Route Number and Route Name Variables 
 
-
-
-
+tidy_distinct_NYC_traffic_data = 
+  gather(distinct_NYC_traffic_data, key = route_number, value = route_name, route1:route11) %>%
+  filter(route_name != "NA") %>% 
+  arrange(line, station_name)
