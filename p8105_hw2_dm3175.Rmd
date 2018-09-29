@@ -7,16 +7,31 @@ output: github_document
 
 ```{r setup, include=FALSE}
 library(tidyverse)
-
+library(p8105.datasets)
 ```
 
 # Problem 1: NYC Transit Data
+Problem 1 will use NYC Transit Data which includes information on entrance and exits for all subway stations located in New York City. 
 
 ## Import and Clean Dataset
-```{r import nyc transit data}
 
+The dataset was first imported and cleaned. The following variables were retained: line, station name, station latitude/longitude, routes served, entry, vending, entrance type, and ADA compliance. 
+
+```{r import nyc transit data}
+NYC_traffic_data = read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names() %>% 
+select(line, station_name, station_latitude, station_longitude, route1:route11, entry, vending, entrance_type, ada) %>% 
+mutate(entrance_type = tolower(entrance_type),
+       line = tolower(line),
+       station_name = tolower(station_name))
 ```
 
 ## Description of Dataset
 
+
+
 ## Reformat Route Number and Route Name Variables 
+
+
+
+
