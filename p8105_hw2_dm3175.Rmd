@@ -9,6 +9,7 @@ output: github_document
 library(tidyverse)
 library(p8105.datasets)
 library("dplyr")
+library(readxl)
 ```
 
 # Problem 1: NYC Transit Data
@@ -91,3 +92,22 @@ There are `r nrow(filter(tidy_distinct_NYC_traffic_data, route_name == "A"))` di
 
 2. **Of the stations that serve the A train, how many are ADA compliant?**
 There are `r nrow(filter(tidy_distinct_NYC_traffic_data, route_name == "A" & ada == TRUE))` ADA compliant stations of those which serve the A train. 
+
+# Problem 2: Mr Trash Wheel Data
+
+## Import and Clean Whole Dataset
+
+```{r important trash wheel data}
+trash_wheel_data = read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+                              sheet = 1, 
+                              range = cell_cols("A:N")) %>% 
+    janitor::clean_names() %>% 
+    filter(dumpster != "NA", month != "Grand Total") %>% 
+    mutate(sports_balls = round(sports_balls, digits = 0)) %>% 
+    mutate(sports_balls = as.integer(sports_balls))
+    
+```
+
+## Read and Clean Precipitation Data 2016 and 2017
+
+## Description of Dataset
