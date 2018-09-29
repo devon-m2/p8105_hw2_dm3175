@@ -63,7 +63,7 @@ There are `r nrow(distinct_NYC_traffic_data)` distinct stations.
 
 2) **How many stations are ADA compliant?**
 
-There are `r tally(distinct_NYC_traffic_data, ada == TRUE, sort = FALSE)` unique ADA compliant stations. 
+There are `r length(distinct_NYC_traffic_data$ada[distinct_NYC_traffic_data$ada == TRUE])` unique ADA compliant stations. 
 
 3) **What proportion of station entrances / exits without vending allow entrance?**
 
@@ -76,8 +76,18 @@ filter_distinct_NYC_traffic_data = filter(distinct_NYC_traffic_data, vending == 
 The proportion of station entrance/exits without vending allowing entrance is `r mean(filter_distinct_NYC_traffic_data$entry)`. 
 
 ## Reformat Route Number and Route Name Variables 
+To finish making this data tidy, data is reformatted so that route number and route name are distinct variables. Route names equal to "NA" were removed, and data was sorted by line and station_name. 
 
+```{r}
 tidy_distinct_NYC_traffic_data = 
   gather(distinct_NYC_traffic_data, key = route_number, value = route_name, route1:route11) %>%
   filter(route_name != "NA") %>% 
   arrange(line, station_name)
+```
+
+### Questions: 
+1. **How many distinct stations serve the A train?**
+There are `r nrow(filter(tidy_distinct_NYC_traffic_data, route_name == "A"))` distinct stations serving A train. 
+
+2. **Of the stations that serve the A train, how many are ADA compliant?**
+There are `r nrow(filter(tidy_distinct_NYC_traffic_data, route_name == "A" & ada == TRUE))` ADA compliant stations of those which serve the A train. 
