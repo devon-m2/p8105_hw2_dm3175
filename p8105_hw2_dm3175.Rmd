@@ -163,5 +163,21 @@ trash_wheel_data_2016 = filter(trash_wheel_data, year == 2016) %>%
     median(trash_wheel_data_2016$sports_balls)
 ```
 
+# Problem 3: BRFSS Data
 
+Load and clean BRFSS data from `p9105.datasets` package: 
+
+```{r load BRFSS Data}
+brfss_data = p8105.datasets::brfss_smart2010 %>% 
+    janitor::clean_names() %>%
+    filter(topic == "Overall Health") %>% 
+    select(year, 
+           location_abbr = locationabbr, 
+           location_desc = locationdesc,
+           response,
+           data_value)
+    
+    
+
+```
 
