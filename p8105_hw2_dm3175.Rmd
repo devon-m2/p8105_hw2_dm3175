@@ -117,31 +117,41 @@ The following steps were taken to clean the dataset:
 
 ## Read and Clean Precipitation Data 2016 and 2017
 
-Next, precipitation data from 2016 and 2017 was read and cleaned. 
+Next, precipitation data from 2016 and 2017 was read and cleaned: 
 
 ```{r import and clean precip data 2016 and 2017}
 precip_2017_data = read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
                               sheet = 3, skip = 1) %>% 
-      janitor::clean_names() %>% 
-      filter(month != "NA", total != "NA") %>% 
+      janitor::clean_names() %>%
+      rename(precip_total = total) %>% 
+      filter(month != "NA", precip_total != "NA") %>% 
       mutate(year = 2017) %>% 
-      select(year, month, total)
+      select(year, month, precip_total)
 
                               
 precip_2016_data = read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
                               sheet = 4, skip = 1) %>% 
       janitor::clean_names() %>%
-      filter(month != "NA", total != "NA") %>%
+      rename(precip_total = total) %>% 
+      filter(month != "NA", precip_total != "NA") %>%
       mutate(year = 2016) %>% 
-      select(year, month, total)
+      select(year, month, precip_total)
 
 ```
 
-Next, the datasets from 2016 and 2017 were joined: 
+The following data cleaning steps were taken: 
+
+*  Clean variable names using `janitor::clean_names`
+*  Renamed the total precipitation value to `precip_total`
+*  Filtered out "NA" values for `month` and `precip_total`
+*  Added `year` variable for year of data collection
+*  Reordered columns
+
+Next, the datasets from 2016 and 2017 were joined. The values for month in the original dataset were coded as integers. In this step, the integers were converted to month names using the built in `month.name` variable in R.  
 
 ```{r join precip 2016 and 2017 data}
-precip_data_all = full_join(precip_2016_data, precip_2017_data)
-# need to add the month conversion
+precip_data_all = full_join(precip_2016_data, precip_2017_data) %>% 
+    mutate(month = month.name[month])
 
 ```
 
@@ -151,16 +161,15 @@ The Healthy Harbor Water Wheel data describes trash collected by a water wheel v
 
 *  `trash_wheel_data`, which contains data on the amount of trash collected by each dumpster by specific trash type. Key variables include `dumpster`, `month`, `year`, `weight_tons` and `volume_cubic_yards` which provide important information on the dumpster of interest, when the data was collected and the trash weight and volume. This dataset has `r nrow(trash_wheel_data)` rows and `r ncol(trash_wheel_data)` columns. 
 
-*  `precip_data_all` is a complete dataset containing the precipitation in inches from months in 2016 and 2017. `year` contains the year data was collected, `month` describes the month of collection, and `total` describes the total precipitation. The 2016 dataset contains precipitation data from `r length(precip_data_all$year[precip_data_all$year == 2016])` months and the 2017 dataset contains precipitation data from `r length(precip_data_all$year[precip_data_all$year == 2017])` months. 
+*  `precip_data_all` is a complete dataset containing the precipitation in inches from months in 2016 and 2017. `year` contains the year data was collected, `month` describes the month of collection, and `precip_total` describes the total precipitation. The 2016 dataset contains precipitation data from `r length(precip_data_all$year[precip_data_all$year == 2016])` months and the 2017 dataset contains precipitation data from `r length(precip_data_all$year[precip_data_all$year == 2017])` months. 
 
 The total precipitation in 2017 is: `r sum(precip_2017_data$total)`. 
 
 The median number of sports balls in a dumpster in 2016 is:
 ```{r median sports balls in 2016, echo = FALSE}
-trash_wheel_data_2016 = filter(trash_wheel_data, year == 2016) %>% 
-    mutate(sports_balls = as.numeric(sports_balls))
-
-    median(trash_wheel_data_2016$sports_balls)
+filter(trash_wheel_data, year == 2016) %>% 
+    pull(sports_balls) %>% 
+    median()
 ```
 
 # Problem 3: BRFSS Data
