@@ -69,13 +69,10 @@ There are `r length(distinct_NYC_traffic_data$ada[distinct_NYC_traffic_data$ada 
 
 3) **What proportion of station entrances / exits without vending allow entrance?**
 
-Use filter to make a filtered dataset based on distinct stations without vending: 
+The proportion of station entrance/exits without vending allowing entrance is:
 ```{r}
-filter_distinct_NYC_traffic_data = filter(distinct_NYC_traffic_data, vending == "NO")
-
+filter(NYC_traffic_data, vending == "NO") %>% pull(entry) %>% mean()
 ```
-
-The proportion of station entrance/exits without vending allowing entrance is `r mean(filter_distinct_NYC_traffic_data$entry)`. 
 
 ## Reformat Route Number and Route Name Variables 
 To finish making this data tidy, data is reformatted so that route number and route name are distinct variables. Route names equal to "NA" were removed, and data was sorted by line and station_name. 
@@ -160,7 +157,7 @@ precip_data_all = full_join(precip_2016_data, precip_2017_data) %>%
 
 The Healthy Harbor Water Wheel data describes trash collected by a water wheel vessel in the Inner Harbor, Baltimore. The data has been split into two datasets: 
 
-*  `trash_wheel_data`, which contains data on the amount of trash collected by each dumpster by specific trash type. Key variables include `dumpster`, `month`, `year`, `weight_tons` and `volume_cubic_yards` which provide important information on the dumpster of interest, when the data was collected and the trash weight and volume. This dataset has `r nrow(trash_wheel_data)` rows and `r ncol(trash_wheel_data)` columns. 
+*  `trash_wheel_data`, which contains data on the amount of trash collected by each dumpster by specific trash type. Key variables include `dumpster`, `month`, `year`, `weight_tons` and `volume_cubic_yards` which provide important information on the dumpster of interest, when the data was collected and the trash weight and volume. The dataset also includes a breakdown of counts of garbage removed by type. This dataset has `r nrow(trash_wheel_data)` rows and `r ncol(trash_wheel_data)` columns. 
 
 *  `precip_data_all` is a complete dataset containing the precipitation in inches from months in 2016 and 2017. `year` contains the year data was collected, `month` describes the month of collection, and `precip_total` describes the total precipitation. The 2016 dataset contains precipitation data from `r length(precip_data_all$year[precip_data_all$year == 2016])` months and the 2017 dataset contains precipitation data from `r length(precip_data_all$year[precip_data_all$year == 2017])` months. 
 
@@ -169,6 +166,8 @@ The **total precipitation in 2017** is: `r sum(precip_2017_data$precip_total)`.
 The **median number of sports balls** in a dumpster in 2016 is: `r filter(trash_wheel_data, year == 2016) %>% pull(sports_balls) %>% median()`. 
 
 # Problem 3: BRFSS Data
+
+The BRFSS dataset includes data from the Behavioral Risk Factors Surveillance System from 2002-2010. This dataset is located in the `p8105.datasets` package. 
 
 ## Import and Clean Dataset
 Load and clean BRFSS data from `p9105.datasets` package: 
@@ -200,11 +199,13 @@ brfss_data = p8105.datasets::brfss_smart2010 %>%
 
 The following steps were taken to clean the dataset: 
 
-*  Clean variable names using `janitor::clean_names` 
+*  Cleaned variable names using `janitor::clean_names`.
 
-*  Filter data to only consider "Overall Health"
+*  Verified variable types imported correctly.
 
-*  Select to keep the following variables: `year`, `location_abbr` which includes an abbreviation for state, `location_desc` which includes a description of specific site, `response` which includes description of response for survey, and `data_value` which includes the numeric value of response. 
+*  Filtered data to only consider "Overall Health".
+
+*  Selected to keep the following variables: `year`, `location_abbr` which includes an abbreviation for state, `location_desc` which includes a description of specific site, `response` which includes description of response for survey, and `data_value` which includes the numeric value of response. 
 
 *  Strutured data so that values for Response (“Excellent” to “Poor”) are column names / variables which indicate the proportion of subjects with each response (which are values of Data_value in the original dataset) using `spread`.
 
@@ -231,11 +232,12 @@ count(brfss_data, location_abbr) %>%
   filter(n == 146) 
 ```
 
-
 *  **In 2002, what is the median of the "Excellent" response value?**
 In 2002, the median of the "Excellent" response value was `r filter(brfss_data, year == 2002) %>% pull(excellent) %>% median(na.rm = TRUE)`. 
 
 *  **Make a histogram of "Excellent" response values in the year 2002?**
+
+The following histogram presents the count of "Excellent" response values in 2002 for all states sampled. 
 
 ```{r histogram of 2002 excellent responses}
 filter(brfss_data, year == 2002) %>% 
@@ -251,6 +253,8 @@ filter(brfss_data, year == 2002) %>%
 ```
 
 *  **Make a scatterplot showing the proportion of "Excellent" response values in New York County and Queens County (both in NY state) in each year from 2002 to 2010.**
+
+The following scatterplot presents the proportion of "Excellent" response values in New York County and Queens County in each year from 2002 to 2010. 
 
 ```{r scatterplot of excellent in NY county and queens}
 filter(brfss_data, location_desc == "NY - New York County" | location_desc == "NY - Queens County") %>%
