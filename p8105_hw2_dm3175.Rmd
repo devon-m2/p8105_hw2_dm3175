@@ -88,10 +88,10 @@ tidy_distinct_NYC_traffic_data =
 
 ### Questions: 
 1. **How many distinct stations serve the A train?**
-There are `r nrow(filter(tidy_distinct_NYC_traffic_data, route_name == "A"))` distinct stations serving A train. 
+There are `r filter(tidy_distinct_NYC_traffic_data, route_name == "A") %>% nrow()` distinct stations serving A train.
 
 2. **Of the stations that serve the A train, how many are ADA compliant?**
-There are `r nrow(filter(tidy_distinct_NYC_traffic_data, route_name == "A" & ada == TRUE))` ADA compliant stations of those which serve the A train. 
+There are `r filter(tidy_distinct_NYC_traffic_data, route_name == "A" & ada == TRUE) %>% nrow()` ADA compliant stations of those which serve the A train. 
 
 # Problem 2: Mr Trash Wheel Data
 
