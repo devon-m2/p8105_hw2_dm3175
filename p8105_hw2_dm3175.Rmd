@@ -10,6 +10,7 @@ library(tidyverse)
 library(p8105.datasets)
 library("dplyr")
 library(readxl)
+library(viridis)
 ```
 
 # Problem 1: NYC Transit Data
@@ -215,19 +216,58 @@ The following steps were taken to clean the dataset:
 
 *  **How many unique locations are included in the dataset? Is every state represented? What state is observed the most?** 
 There are `r distinct(brfss_data, location_desc, .keep_all = TRUE) %>% nrow()` unique locations included in the dataset. All `r distinct(brfss_data, location_abbr, .keep_all = TRUE) %>% nrow()` states are represented including Washington, DC. 
-## get state observed the most 
+
+Next, the most frequently represented state was located by calculating the frequency of each state and then finding the state corresponding to the highest frequency. The **most frequently represented state was New Jersey**.  
+
+```{r}
+# Find frequency for each state and find max frequency associated with that state. 
+
+count(brfss_data, location_abbr) %>%
+  pull(n) %>% 
+  max()
+
+ # Filter by highest frequency value and find the corresponding state
+count(brfss_data, location_abbr) %>%
+  filter(n == 146) 
+```
+
 
 *  **In 2002, what is the median of the "Excellent" response value?**
 In 2002, the median of the "Excellent" response value was `r filter(brfss_data, year == 2002) %>% pull(excellent) %>% median(na.rm = TRUE)`. 
 
 *  **Make a histogram of "Excellent" response values in the year 2002?**
 
-## finish
+```{r histogram of 2002 excellent responses}
+filter(brfss_data, year == 2002) %>% 
+    ggplot(aes(x = excellent)) + 
+      geom_histogram() +
+      labs(
+        title = "Histogram of Excellent Response Values in 2002",
+        x = "Excellent Response Value",
+        y = "Count",
+        caption = "Data from BRFSS dataset"
+        )
 
+```
 
 *  **Make a scatterplot showing the proportion of "Excellent" response values in New York County and Queens County (both in NY state) in each year from 2002 to 2010.**
 
-## finish
+```{r scatterplot of excellent in NY county and queens}
+filter(brfss_data, location_desc == "NY - New York County" | location_desc == "NY - Queens County") %>%
+  mutate(proportion_excellent = (excellent)/(excellent + fair + very_good + poor + good)) %>% 
+  ggplot(aes(x = year, y = proportion_excellent)) + 
+  geom_point(aes(color = location_desc), alpha = .5) + 
+  labs(
+    title = "Proportion of Excellent Response Values per Year from 2002 to 2010",
+    x = "Year",
+    y = "Proportion of Excellent Response Values Each Gear",
+    caption = "Data from the BRFSS dataset"
+  ) + 
+  ggthemes::scale_color_wsj(name = "Location") +
+  theme_bw() + 
+  theme(legend.position = "bottom")
+
+```
 
 
 
