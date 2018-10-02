@@ -175,8 +175,12 @@ brfss_data = p8105.datasets::brfss_smart2010 %>%
            location_abbr = locationabbr, 
            location_desc = locationdesc,
            response,
-           data_value)
+           data_value) %>% 
+    spread(key = response, value = data_value)
+  
+  # finish problem 
     
+           
     
 
 ```
