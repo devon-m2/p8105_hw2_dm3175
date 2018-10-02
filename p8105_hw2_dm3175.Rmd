@@ -165,6 +165,7 @@ trash_wheel_data_2016 = filter(trash_wheel_data, year == 2016) %>%
 
 # Problem 3: BRFSS Data
 
+## Import and Clean Dataset
 Load and clean BRFSS data from `p9105.datasets` package: 
 
 ```{r load BRFSS Data}
@@ -191,4 +192,19 @@ brfss_data = p8105.datasets::brfss_smart2010 %>%
            proportion_excellent_very_good)
   
 ```
+
+## Questions about Dataset
+
+*  **How many unique locations are included in the dataset? Is every state represented? What state is observed the most?** 
+
+*  **In 2002, what is the median of the "Excellent" response value?**
+In 2002, the median of the "Excellent" response value was  # need to finish this. 
+
+*  **Make a histogram of "Excellent" response values in the year 2002?**
+
+*  **Make a scatterplot showing the proportion of "Excellent" response values in New York County and Queens County (both in NY state) in each year from 2002 to 2010.**
+
+
+
+
 
