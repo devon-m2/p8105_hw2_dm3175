@@ -1,7 +1,7 @@
 ---
 title: "p8105_hw2_dm3175"
 author: "Devon Morgan"
-date: "9/26/2018"
+date: "10/3/2018"
 output: github_document
 ---
 
@@ -55,7 +55,7 @@ The dataset was imported and the following data cleaning steps were taken:
 
 1) **How many distinct stations are there?**
 
-To extract the number of distinct stations, created a subset of data removing duplicates based on both `station_name` and `line`. This dataset still maintains information for all other variables kept above. 
+To extract the number of distinct stations, created a subset of data removing duplicates based on both `station_name` and `line`. Note that stations are identified both by name and by line (e.g. 125th St A/B/C/D; 125st 1; 125st 4/5). This dataset still maintains information for all other variables kept above. 
 ```{r extract distinct stations}
 distinct_NYC_traffic_data = distinct(NYC_traffic_data, line, station_name, .keep_all = TRUE)
   
@@ -75,18 +75,23 @@ filter(NYC_traffic_data, vending == "NO") %>% pull(entry) %>% mean()
 ```
 
 ## Reformat Route Number and Route Name Variables 
-To finish making this data tidy, data is reformatted so that route number and route name are distinct variables. Route names equal to "NA" were removed, and data was sorted by line and station_name. 
+To finish making this data tidy, data (both original clean `NYC_traffic_data` dataset and `distinct_NYC_traffic_data` distinct stations datasets) are reformatted so that route number and route name are distinct variables. Route names equal to "NA" were removed, and data was sorted by line and station_name. 
 
 ```{r}
 tidy_distinct_NYC_traffic_data = 
   gather(distinct_NYC_traffic_data, key = route_number, value = route_name, route1:route11) %>%
   filter(route_name != "NA") %>% 
   arrange(line, station_name)
+
+tidy_NYC_traffic_data =
+  gather(NYC_traffic_data, key = route_number, value = route_name, route1:route11) %>%
+  filter(route_name != "NA") %>% 
+  arrange(line, station_name)
 ```
 
 ### Questions: 
 1. **How many distinct stations serve the A train?**
-There are `r filter(tidy_distinct_NYC_traffic_data, route_name == "A") %>% nrow()` distinct stations serving A train.
+There are `r filter(tidy_distinct_NYC_traffic_data, route_name == "A") %>% nrow()` distinct stations serving the A train.
 
 2. **Of the stations that serve the A train, how many are ADA compliant?**
 There are `r filter(tidy_distinct_NYC_traffic_data, route_name == "A" & ada == TRUE) %>% nrow()` ADA compliant stations of those which serve the A train. 
@@ -94,6 +99,8 @@ There are `r filter(tidy_distinct_NYC_traffic_data, route_name == "A" & ada == T
 # Problem 2: Mr Trash Wheel Data
 
 ## Import and Clean Whole Dataset
+
+The dataset was first imported and cleaned: 
 
 ```{r important trash wheel data}
 trash_wheel_data = read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
@@ -108,10 +115,10 @@ trash_wheel_data = read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx"
 
 The following steps were taken to clean the dataset:
 
-*  omitted columns with notes
-*  cleaned variable names using `janitor::clean_names()`
-*  filtered out rows that do not include dumpster-specific data
-*  rounded number of sports balls to nearest integer and converted into integer value. 
+*  Omitted columns with notes
+*  Cleaned variable names using `janitor::clean_names()`
+*  Filtered out rows that do not include dumpster-specific data (by filtering `dumpster` to exclude "NA" and `month` to exclude "Grand Total")
+*  Rounded number of sports balls to nearest integer and converted into integer value. 
 
 ## Read and Clean Precipitation Data 2016 and 2017
 
@@ -137,15 +144,15 @@ precip_2016_data = read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx"
 
 ```
 
-The following data cleaning steps were taken: 
+The following data cleaning steps were taken for both 2016 and 2017 datasets: 
 
-*  Clean variable names using `janitor::clean_names`
+*  Cleaned variable names using `janitor::clean_names`
 *  Renamed the total precipitation value to `precip_total`
 *  Filtered out "NA" values for `month` and `precip_total`
-*  Added `year` variable for year of data collection
-*  Reordered columns
+*  Added `year` variable for year of data collection using `mutate` function
+*  Reordered columns to improve logical flow
 
-Next, the datasets from 2016 and 2017 were joined. The values for month in the original dataset were coded as integers. In this step, the integers were converted to month names using the built in `month.name` variable in R.  
+Next, the datasets from 2016 and 2017 were joined. The `full join` function was used to preserve all observations from both datasets. The values for month in the original dataset were coded as integers. In this step, the integers were converted to month names using the built in `month.name` variable in R.  
 
 ```{r join precip 2016 and 2017 data}
 precip_data_all = full_join(precip_2016_data, precip_2017_data) %>% 
@@ -170,7 +177,7 @@ The **median number of sports balls** in a dumpster in 2016 is: `r filter(trash_
 The BRFSS dataset includes data from the Behavioral Risk Factors Surveillance System from 2002-2010. This dataset is located in the `p8105.datasets` package. 
 
 ## Import and Clean Dataset
-Load and clean BRFSS data from `p9105.datasets` package: 
+Loaded and cleaned BRFSS data from `p9105.datasets` package: 
 
 ```{r load BRFSS Data}
 brfss_data = p8105.datasets::brfss_smart2010 %>% 
@@ -203,7 +210,7 @@ The following steps were taken to clean the dataset:
 
 *  Verified variable types imported correctly.
 
-*  Filtered data to only consider "Overall Health".
+*  Filtered data to only consider "Overall Health" topic.
 
 *  Selected to keep the following variables: `year`, `location_abbr` which includes an abbreviation for state, `location_desc` which includes a description of specific site, `response` which includes description of response for survey, and `data_value` which includes the numeric value of response. 
 
@@ -264,7 +271,7 @@ filter(brfss_data, location_desc == "NY - New York County" | location_desc == "N
   labs(
     title = "Proportion of Excellent Response Values per Year from 2002 to 2010",
     x = "Year",
-    y = "Proportion of Excellent Response Values Each Gear",
+    y = "Proportion of Excellent Response Values Each Year",
     caption = "Data from the BRFSS dataset"
   ) + 
   ggthemes::scale_color_wsj(name = "Location") +
