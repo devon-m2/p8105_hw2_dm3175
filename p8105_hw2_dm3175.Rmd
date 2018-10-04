@@ -100,10 +100,10 @@ There are `r filter(tidy_distinct_NYC_traffic_data, route_name == "A" & ada == T
 
 ## Import and Clean Whole Dataset
 
-The dataset was first imported and cleaned: 
+The Healthy Harbor Water Wheel ("Mr. Trash Wheel") from 7-29-2018 dataset was first imported and cleaned: 
 
 ```{r important trash wheel data}
-trash_wheel_data = read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+trash_wheel_data = read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
                               sheet = 1, 
                               range = cell_cols("A:N")) %>% 
     janitor::clean_names() %>% 
@@ -125,20 +125,20 @@ The following steps were taken to clean the dataset:
 Next, precipitation data from 2016 and 2017 was read and cleaned: 
 
 ```{r import and clean precip data 2016 and 2017}
-precip_2017_data = read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
-                              sheet = 3, skip = 1) %>% 
+precip_2017_data = read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
+                              sheet = 4, skip = 1) %>% 
       janitor::clean_names() %>%
       rename(precip_total = total) %>% 
-      filter(month != "NA", precip_total != "NA") %>% 
+      filter(month != "NA") %>% 
       mutate(year = 2017) %>% 
       select(year, month, precip_total)
 
                               
-precip_2016_data = read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
-                              sheet = 4, skip = 1) %>% 
+precip_2016_data = read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
+                              sheet = 5, skip = 1) %>% 
       janitor::clean_names() %>%
       rename(precip_total = total) %>% 
-      filter(month != "NA", precip_total != "NA") %>%
+      filter(month != "NA") %>%
       mutate(year = 2016) %>% 
       select(year, month, precip_total)
 
@@ -148,7 +148,7 @@ The following data cleaning steps were taken for both 2016 and 2017 datasets:
 
 *  Cleaned variable names using `janitor::clean_names`
 *  Renamed the total precipitation value to `precip_total`
-*  Filtered out "NA" values for `month` and `precip_total`
+*  Filtered out "NA" values for `month` to remove row for sum that does not have a specific month data value
 *  Added `year` variable for year of data collection using `mutate` function
 *  Reordered columns to improve logical flow
 
@@ -162,9 +162,9 @@ precip_data_all = full_join(precip_2016_data, precip_2017_data) %>%
 
 ## Description of Dataset
 
-The Healthy Harbor Water Wheel data describes trash collected by a water wheel vessel in the Inner Harbor, Baltimore. The data has been split into two datasets: 
+The Healthy Harbor Water Wheel data describes trash collected by a water wheel vessel in the Inner Harbor, Baltimore from May 2014 - July 2018. The data has been split into two datasets: 
 
-*  `trash_wheel_data`, which contains data on the amount of trash collected by each dumpster by specific trash type. Key variables include `dumpster`, `month`, `year`, `weight_tons` and `volume_cubic_yards` which provide important information on the dumpster of interest, when the data was collected and the trash weight and volume. The dataset also includes a breakdown of counts of garbage removed by type. This dataset has `r nrow(trash_wheel_data)` rows and `r ncol(trash_wheel_data)` columns. 
+*  `trash_wheel_data`, which contains data on the amount of trash collected by each dumpster by specific trash type. Data points were collected multiple times per month from May 2014 - July 2018, and the raw data is available in this sheet. Key variables include `dumpster`, `month`, `year`, `weight_tons` and `volume_cubic_yards` which provide important information on the dumpster of interest, when the data was collected and the trash weight and volume. The dataset also includes a breakdown of counts of garbage removed by type. This dataset has `r nrow(trash_wheel_data)` rows and `r ncol(trash_wheel_data)` columns. 
 
 *  `precip_data_all` is a complete dataset containing the precipitation in inches from months in 2016 and 2017. `year` contains the year data was collected, `month` describes the month of collection, and `precip_total` describes the total precipitation. The 2016 dataset contains precipitation data from `r length(precip_data_all$year[precip_data_all$year == 2016])` months and the 2017 dataset contains precipitation data from `r length(precip_data_all$year[precip_data_all$year == 2017])` months. 
 
